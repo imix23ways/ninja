@@ -1391,8 +1391,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 	            thingToPush.layerData.stageElement = arrElements[i];
 	            thingToPush.layerData.isLock = false;
 	            thingToPush.layerData.isHidden = false;
-	            thingToPush.layerData.created = !isPaste;
-	            thingToPush.created = !isPaste;
+	            thingToPush.layerData.created = false;
+	            thingToPush.created = false;
 
 				if (this.checkable_animated.classList.contains("checked")) {
 					thingToPush.layerData.isVisible = false;
