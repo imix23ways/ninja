@@ -142,6 +142,7 @@ var Keyframe = exports.Keyframe = Montage.create(Component, {
 	handleDragend: {
 		value: function(event) {
 			this.parentComponent.isDragging = false;
+			this.selectKeyframe();
 		}
 	},
     // ==== End Event handlers
