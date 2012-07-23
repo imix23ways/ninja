@@ -1359,8 +1359,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         	var i = 0,
         		j = 0,
         		arrElementsLength = arrElements.length,
-        		arrNewLayers = [],
-        		arrNewLayersLength = 0,
         		stageElementName = "",
         		targetIndex = 0;
         	if (this.lastInsertionIndex !== false) {
@@ -1381,6 +1379,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 	            stageElementName="";
 	            
 	            // thingToPush is the template we just got.  Now fill it in.
+                if(arrElements[i].id){
+                    stageElementName = arrElements[i].id;
+                }
 	            thingToPush.layerData.layerName = stageElementName;
 	            thingToPush.layerData.layerTag = "<" + arrElements[i].nodeName.toLowerCase() + ">";
 	            thingToPush.layerData.layerID = this.currentLayerNumber;
