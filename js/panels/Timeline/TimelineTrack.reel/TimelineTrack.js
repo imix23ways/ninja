@@ -904,7 +904,11 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             var tweenIDToRemove = this.application.ninja.timeline.selectedTweens[0].tweenID,
                 oldPosition = this.application.ninja.timeline.selectedTweens[0].spanPosition,
                 oldSpanWidth = this.application.ninja.timeline.selectedTweens[0].spanWidth;
-
+            // Special case: deleting the "last" tween (really means deleting the last two tweens)
+            if (this.tweens.length === 2) {
+                this.tweens = [];
+                return;
+            }
             if(tweenIDToRemove == this.tweens[this.tweens.length-1].tweenData.tweenID){
                 this.trackDuration = this.tweens[this.tweens.length-2].tweenData.keyFrameMillisec;
                 this.tweens.pop();
@@ -1144,22 +1148,31 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
            // this.ninjaStylesContoller.deleteRule(this.currentKeyframeRule);
             var keyframeString = "@-webkit-keyframes " + this.animationName + " {";
 
-            for (var i = 0; i < this.tweens.length; i++) {
-                var keyMill = parseInt(this.tweens[i].tweenData.keyFrameMillisec);
-                // trackDur should be parseFloat rounded to significant digits
-                var trackDur = parseInt(this.trackDuration);
-                var keyframePercent = Math.round((keyMill / trackDur) * 100) + "%";
-                var keyframePropertyString = " " + keyframePercent + " {";
-                for(var prop in this.tweens[i].tweenData.tweenedProperties){
-                    keyframePropertyString += prop + ": " + this.tweens[i].tweenData.tweenedProperties[prop] + ";";
+            // If there are no tweens, we just need to delete the current keyframe rule
+            if (this.tweens.length === 0) {
+                if (this.currentKeyframeRule !== null) {
+                    this.ninjaStylesContoller.deleteRule(this.currentKeyframeRule);
+                    this.application.ninja.currentDocument.model.needsSave = true;
+                    this.currentKeyframeRule = null;
                 }
-                keyframePropertyString += "}";
-                keyframeString += keyframePropertyString;
+            } else {
+                for (var i = 0; i < this.tweens.length; i++) {
+                    var keyMill = parseInt(this.tweens[i].tweenData.keyFrameMillisec);
+                    // trackDur should be parseFloat rounded to significant digits
+                    var trackDur = parseInt(this.trackDuration);
+                    var keyframePercent = Math.round((keyMill / trackDur) * 100) + "%";
+                    var keyframePropertyString = " " + keyframePercent + " {";
+                    for(var prop in this.tweens[i].tweenData.tweenedProperties){
+                        keyframePropertyString += prop + ": " + this.tweens[i].tweenData.tweenedProperties[prop] + ";";
+                    }
+                    keyframePropertyString += "}";
+                    keyframeString += keyframePropertyString;
+                }
+                keyframeString += " }";
+                this.currentKeyframeRule = this.ninjaStylesContoller.addRule(keyframeString);
+                this.application.ninja.currentDocument.model.needsSave = true;
             }
-            keyframeString += " }";
 
-            this.currentKeyframeRule = this.ninjaStylesContoller.addRule(keyframeString);
-            this.application.ninja.currentDocument.model.needsSave = true;
         }
     },
 
