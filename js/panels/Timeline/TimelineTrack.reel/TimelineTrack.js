@@ -1141,7 +1141,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     updateKeyframeRule:{
         value:function () {
-            this.ninjaStylesContoller.deleteRule(this.currentKeyframeRule);
+           // this.ninjaStylesContoller.deleteRule(this.currentKeyframeRule);
             var keyframeString = "@-webkit-keyframes " + this.animationName + " {";
 
             for (var i = 0; i < this.tweens.length; i++) {
